@@ -8,17 +8,27 @@ class ProductController
     {
         global $pdo;
 
-        // 1. Pedimos los datos a Neon (El Modelo)
+        // 1. OBTENEMOS LOS DATOS
+        // Veo que tienes un archivo models/Producto.php. Lo ideal sería usar ese modelo,
+        // pero para asegurarnos de que levante ahora mismo, usaremos la consulta directa.
         $stmt = $pdo->query("SELECT * FROM productos");
-        $productos = $stmt->fetchAll();
+        $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // 2. Cargamos tu estructura visual (Las Vistas)
-        // Ajusta estas rutas dependiendo de dónde tengas tus archivos HTML/PHP de diseño
+        // 2. CARGAMOS TU DISEÑO (LAS VISTAS)
+        // El orden es importante: primero la cabecera, luego el contenido, luego el pie.
 
-        // require_once __DIR__ . '/../views/layout/header.php'; // Si tienes un header separado
+        if (file_exists(__DIR__ . '/../views/layout/header.php')) {
+            require_once __DIR__ . '/../views/layout/header.php';
+        }
 
-        require_once __DIR__ . '/../views/productos.php'; // AQUÍ ES DONDE ESTÁ TU DISEÑO REAL
+        if (file_exists(__DIR__ . '/../views/productos/catalogo.php')) {
+            require_once __DIR__ . '/../views/productos/catalogo.php';
+        } else {
+            echo "Error: No se encuentra el archivo del catálogo.";
+        }
 
-        // require_once __DIR__ . '/../views/layout/footer.php'; // Si tienes un footer separado
+        if (file_exists(__DIR__ . '/../views/layout/footer.php')) {
+            require_once __DIR__ . '/../views/layout/footer.php';
+        }
     }
 }
