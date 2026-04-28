@@ -50,4 +50,5 @@ class ProductController
         require_once __DIR__ . '/../views/productos/detalle.php';
         require_once __DIR__ . '/../views/layout/footer.php';
     }
+    
 }
