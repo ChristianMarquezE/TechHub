@@ -1,11 +1,9 @@
 <?php
+// app/models/Producto.php
+
 require_once __DIR__ . '/Database.php';
 
 class Producto {
-    private int $id;
-    private string $nombre;
-    private float $precio;
-    private int $stock;
     private PDO $db;
 
     public function __construct() {

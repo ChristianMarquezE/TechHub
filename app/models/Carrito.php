@@ -1,4 +1,6 @@
 <?php
+// app/models/Carrito.php
+
 require_once __DIR__ . '/Database.php';
 
 class Carrito {

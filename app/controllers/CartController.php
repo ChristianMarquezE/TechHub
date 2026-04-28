@@ -2,6 +2,7 @@
 // app/controllers/CartController.php
 
 require_once __DIR__ . '/../models/Carrito.php';
+require_once __DIR__ . '/../models/Orden.php'; // Agregamos el modelo de Orden
 
 class CartController {
     
@@ -41,7 +42,6 @@ class CartController {
             
             if ($producto_id > 0) {
                 $modelo = new Carrito();
-                // Asegúrate de que tu modelo Carrito tenga un método 'agregar' o 'agregarItem'
                 $modelo->agregar($_SESSION['usuario']['id'], $producto_id, $cantidad);
                 
                 // Actualizamos el contador para la burbuja del navbar
@@ -62,6 +62,39 @@ class CartController {
             // Actualizar contador después de eliminar
             $_SESSION['carrito_count'] = $modelo->contarItems($_SESSION['usuario']['id']);
         }
+        header('Location: ' . BASE_URL . 'carrito');
+        exit;
+    }
+    
+    // NUEVA FUNCIÓN PARA PROCESAR EL PAGO
+    public function pagar() {
+        if (!isset($_SESSION['usuario'])) {
+            header('Location: ' . BASE_URL . 'usuario/login');
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $carritoModelo = new Carrito();
+            $ordenModelo = new Orden();
+
+            $usuario_id = $_SESSION['usuario']['id'];
+            $items = $carritoModelo->getByUsuario($usuario_id);
+
+            if (!empty($items)) {
+                // 1. Creamos la orden en la BD
+                $ordenModelo->crear($usuario_id, $items);
+                
+                // 2. Vaciamos el carrito
+                $carritoModelo->vaciar($usuario_id);
+                $_SESSION['carrito_count'] = 0;
+                
+                // 3. Redirigimos al catálogo (podrías mandarlo a una vista de éxito más adelante)
+                header('Location: ' . BASE_URL . 'productos'); 
+                exit;
+            }
+        }
+        
+        // Si no hay items o no es POST, lo devolvemos al carrito
         header('Location: ' . BASE_URL . 'carrito');
         exit;
     }

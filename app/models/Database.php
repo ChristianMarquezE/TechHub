@@ -12,7 +12,6 @@ class Database {
 
         // Si no estamos en Vercel, usamos la URL de Neon fija para tu entorno local
         if (empty($databaseUrl)) {
-            // Pega tu Connection String de Neon aquí para que funcione en tu XAMPP/VSCode
             $databaseUrl = "postgresql://neondb_owner:npg_ZxDsV7tBPc8L@ep-shiny-block-am040vgm-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require";
         }
 
@@ -37,7 +36,6 @@ class Database {
         }
     }
 
-    // Método para obtener la instancia única
     public static function getInstance() {
         if (self::$instance === null) {
             self::$instance = new self();
@@ -45,7 +43,6 @@ class Database {
         return self::$instance;
     }
 
-    // Método para obtener el objeto PDO y hacer consultas
     public function getConnection() {
         return $this->pdo;
     }
