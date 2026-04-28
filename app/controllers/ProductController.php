@@ -13,9 +13,12 @@ class ProductController
         // 1. CAPTURAR FILTROS DE LA URL
         $filtroCategoria = $_GET['categoria'] ?? '';
         $filtroBusqueda  = $_GET['q'] ?? '';
+        // Capturamos los precios, asegurándonos de que sean números (o 0 si están vacíos)
+        $minPrecio       = isset($_GET['min_precio']) && is_numeric($_GET['min_precio']) ? (float)$_GET['min_precio'] : 0;
+        $maxPrecio       = isset($_GET['max_precio']) && is_numeric($_GET['max_precio']) ? (float)$_GET['max_precio'] : 0;
 
-        // 2. OBTENER PRODUCTOS FILTRADOS
-        $productos = $modeloProducto->getAll($filtroCategoria, $filtroBusqueda);
+        // 2. OBTENER PRODUCTOS FILTRADOS (Añadimos los precios aquí)
+        $productos = $modeloProducto->getAll($filtroCategoria, $filtroBusqueda, $minPrecio, $maxPrecio);
 
         // 3. OBTENER LISTA DE CATEGORÍAS (Para el Sidebar)
         try {

@@ -4,12 +4,31 @@
             <h5 class="fw-bold text-navy mb-3"><i class="bi bi-funnel me-2"></i>Filtros</h5>
 
             <form action="<?= BASE_URL ?>productos" method="GET" class="mb-4">
+                <?php if (!empty($filtroCategoria)): ?>
+                    <input type="hidden" name="categoria" value="<?= htmlspecialchars($filtroCategoria) ?>">
+                <?php endif; ?>
+
                 <label class="small fw-bold text-muted mb-1">Buscar producto</label>
-                <div class="input-group">
+                <div class="input-group mb-3">
                     <input type="text" name="q" class="form-control form-control-sm border-0 bg-light"
                         placeholder="Ej: Notebook..." value="<?= htmlspecialchars($filtroBusqueda ?? '') ?>">
-                    <button class="btn btn-primary btn-sm" type="submit"><i class="bi bi-search"></i></button>
                 </div>
+
+                <label class="small fw-bold text-muted mb-1">Rango de precio ($)</label>
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <input type="number" name="min_precio" class="form-control form-control-sm border-0 bg-light"
+                            placeholder="Mínimo" min="0" value="<?= $minPrecio > 0 ? $minPrecio : '' ?>">
+                    </div>
+                    <div class="col-6">
+                        <input type="number" name="max_precio" class="form-control form-control-sm border-0 bg-light"
+                            placeholder="Máximo" min="0" value="<?= $maxPrecio > 0 ? $maxPrecio : '' ?>">
+                    </div>
+                </div>
+
+                <button class="btn btn-primary btn-sm w-100 fw-bold rounded-3" type="submit">
+                    <i class="bi bi-search me-1"></i> Aplicar Filtros
+                </button>
             </form>
 
             <h6 class="small fw-bold text-muted mb-2">Categorías</h6>
@@ -27,7 +46,7 @@
                 <?php endforeach; ?>
             </div>
 
-            <?php if (!empty($filtroCategoria) || !empty($filtroBusqueda)): ?>
+            <?php if (!empty($filtroCategoria) || !empty($filtroBusqueda) || $minPrecio > 0 || $maxPrecio > 0): ?>
                 <hr>
                 <a href="<?= BASE_URL ?>productos" class="btn btn-link btn-sm text-danger text-decoration-none p-0">
                     <i class="bi bi-x-circle me-1"></i> Limpiar filtros

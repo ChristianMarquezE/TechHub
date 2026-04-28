@@ -12,7 +12,7 @@ class Producto
         $this->db = Database::getInstance()->getConnection();
     }
 
-    public function getAll(string $categoriaNombre = '', string $busqueda = ''): array
+    public function getAll(string $categoriaNombre = '', string $busqueda = '', float $minPrecio = 0, float $maxPrecio = 0): array
     {
         $sql = "SELECT p.*, c.nombre as categoria_nombre 
                 FROM productos p
@@ -21,14 +21,28 @@ class Producto
 
         $params = [];
 
+        // Filtro por Categoría
         if (!empty($categoriaNombre)) {
             $sql .= " AND c.nombre = :categoria";
             $params[':categoria'] = $categoriaNombre;
         }
 
+        // Filtro por Búsqueda (Texto)
         if (!empty($busqueda)) {
             $sql .= " AND p.nombre ILIKE :busqueda";
             $params[':busqueda'] = "%$busqueda%";
+        }
+
+        // Filtro por Precio Mínimo
+        if ($minPrecio > 0) {
+            $sql .= " AND p.precio >= :minPrecio";
+            $params[':minPrecio'] = $minPrecio;
+        }
+
+        // Filtro por Precio Máximo
+        if ($maxPrecio > 0) {
+            $sql .= " AND p.precio <= :maxPrecio";
+            $params[':maxPrecio'] = $maxPrecio;
         }
 
         $sql .= " ORDER BY p.id DESC";
