@@ -50,9 +50,9 @@ class Producto
     public function getById(int $id): array|false
     {
         $sql = "SELECT p.*, c.nombre as categoria_nombre 
-                FROM productos p
-                LEFT JOIN categorias c ON p.categoria = c.id 
-                WHERE p.id = :id";
+            FROM productos p
+            LEFT JOIN categorias c ON p.categoria = c.id 
+            WHERE p.id = :id";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([':id' => $id]);
