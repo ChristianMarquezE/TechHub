@@ -2,7 +2,7 @@
 // api/db.php
 
 // Reemplaza esta URL con tu Connection String real de Neon.tech si es diferente
-$databaseUrl = "postgresql://neondb_owner:npg_ZxDsV7tBPc8L@ep-shiny-block-am040vgm-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require";
+$databaseUrl = "DATABASE_URL";
 
 try {
     $url = parse_url($databaseUrl);
