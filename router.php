@@ -1,4 +1,6 @@
 <?php
+// router.php
+
 $uri = $_GET['url'] ?? 'productos';
 $uri = trim($uri, '/');
 $partes = explode('/', $uri);
@@ -17,14 +19,21 @@ $controladores = [
 if (array_key_exists($controlador, $controladores)) {
     $clase = $controladores[$controlador];
     $ruta = __DIR__ . "/app/controllers/$clase.php";
-require_once $ruta;
-    require_once __DIR__ . "/app/controllers/$clase.php";
-    $ctrl = new $clase();
-    if (method_exists($ctrl, $accion)) {
-        $ctrl->$accion($id);
+    
+    // Verificamos que el archivo físico realmente exista
+    if (file_exists($ruta)) {
+        require_once $ruta; // Se incluye UNA SOLA VEZ
+        
+        $ctrl = new $clase();
+        if (method_exists($ctrl, $accion)) {
+            $ctrl->$accion($id);
+        } else {
+            http_response_code(404);
+            echo "Error: La acción '{$accion}' no existe en el controlador '{$clase}'.";
+        }
     } else {
         http_response_code(404);
-        echo "Acción no encontrada";
+        echo "Error: El archivo del controlador '{$clase}.php' no se encontró en la carpeta /app/controllers/.";
     }
 } else {
     http_response_code(404);
