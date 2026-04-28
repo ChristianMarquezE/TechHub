@@ -2,7 +2,8 @@
 // app/controllers/AdminController.php
 
 require_once __DIR__ . '/../models/Producto.php';
-// require_once __DIR__ . '/../models/Orden.php'; // Descomenta cuando tengas el modelo Orden listo
+require_once __DIR__ . '/../models/Database.php'; // Agregamos esto para usar la conexión
+// require_once __DIR__ . '/../models/Orden.php'; 
 
 class AdminController {
     public function __construct() {
@@ -14,7 +15,6 @@ class AdminController {
     }
 
     public function index($id = null) {
-        // Redirigir limpiamente a la acción listar usando URLs amigables
         header('Location: ' . BASE_URL . 'admin/listar');
         exit;
     }
@@ -37,7 +37,7 @@ class AdminController {
                 ':descripcion' => $_POST['descripcion'],
                 ':precio'      => $_POST['precio'],
                 ':stock'       => $_POST['stock'],
-                ':categoria'   => $_POST['categoria'],
+                ':categoria'   => $_POST['categoria'], // Este guardará el ID de la categoría
                 ':imagen'      => $_POST['imagen'] ?? '',
             ]);
             
@@ -47,6 +47,17 @@ class AdminController {
             }
             $error = 'Error al crear el producto en la base de datos.';
         }
+        
+        // --- NUEVO: OBTENER CATEGORÍAS PARA EL SELECT ---
+        try {
+            $db = Database::getInstance()->getConnection();
+            $stmt = $db->query("SELECT id, nombre FROM categorias ORDER BY nombre ASC");
+            $categorias = $stmt->fetchAll();
+        } catch (PDOException $e) {
+            $error = "Error al cargar categorías: " . $e->getMessage();
+            $categorias = [];
+        }
+        // ------------------------------------------------
         
         require_once __DIR__ . '/../views/layout/header.php';
         require_once __DIR__ . '/../views/admin/crear.php';

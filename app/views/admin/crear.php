@@ -20,20 +20,27 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label text-navy fw-medium">Precio ($)</label>
-                            <input type="number" name="precio" class="form-control rounded-3" required>
+                            <input type="number" step="0.01" name="precio" class="form-control rounded-3" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label text-navy fw-medium">Stock Inicial</label>
                             <input type="number" name="stock" class="form-control rounded-3" required>
                         </div>
                     </div>
+                    
                     <div class="mb-3">
                         <label class="form-label text-navy fw-medium">Categoría</label>
-                        <select name="categoria" class="form-select rounded-3">
-                            <option value="notebooks">Notebooks</option>
-                            <option value="tablets">Tablets</option>
-                            <option value="accesorios">Accesorios</option>
-                            <option value="monitores">Monitores</option>
+                        <select name="categoria" class="form-select rounded-3" required>
+                            <option value="" disabled selected>Seleccione una categoría...</option>
+                            <?php if (!empty($categorias)): ?>
+                                <?php foreach ($categorias as $cat): ?>
+                                    <option value="<?= htmlspecialchars($cat['id']) ?>">
+                                        <?= htmlspecialchars($cat['nombre']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <option value="" disabled>No hay categorías registradas</option>
+                            <?php endif; ?>
                         </select>
                     </div>
                     <div class="mb-4">
