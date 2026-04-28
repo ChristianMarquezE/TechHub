@@ -1,9 +1,12 @@
 <?php
 // config.php
-// Archivo de configuración global
 
-// Define la ruta base de tu proyecto para enlazar CSS, JS e imágenes fácilmente
-define('BASE_URL', 'http://localhost/techhub/');
-
-// Nota: Las credenciales de la base de datos ya no van aquí, 
-// se manejan directamente en api/db.php con la URL de Neon.tech
+// Detectar si estamos en local o en Vercel/Producción
+if ($_SERVER['HTTP_HOST'] == 'localhost') {
+    // URL para tu PC
+    define('BASE_URL', 'http://localhost/techhub/');
+} else {
+    // URL automática para Vercel (detecta el dominio actual)
+    // Usamos https:// porque Vercel siempre tiene certificado de seguridad
+    define('BASE_URL', 'https://' . $_SERVER['HTTP_HOST'] . '/');
+}
