@@ -2,12 +2,12 @@
 // app/controllers/AdminController.php
 
 require_once __DIR__ . '/../models/Producto.php';
-require_once __DIR__ . '/../models/Database.php'; // Agregamos esto para usar la conexión
-// require_once __DIR__ . '/../models/Orden.php'; 
+require_once __DIR__ . '/../models/Database.php';
 
 class AdminController {
+    
     public function __construct() {
-        // Protección de rutas estricta
+        // Protección de rutas: Si no hay sesión o no es admin, fuera.
         if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'admin') {
             header('Location: ' . BASE_URL . 'usuario/login');
             exit;
@@ -20,7 +20,7 @@ class AdminController {
     }
 
     public function listar($id = null) {
-        $modelo    = new Producto();
+        $modelo = new Producto();
         $productos = $modelo->getAll();
         
         require_once __DIR__ . '/../views/layout/header.php';
@@ -30,34 +30,38 @@ class AdminController {
 
     public function crear($id = null) {
         $error = '';
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $modelo = new Producto();
-            $ok = $modelo->crear([
-                ':nombre'      => $_POST['nombre'],
-                ':descripcion' => $_POST['descripcion'],
-                ':precio'      => $_POST['precio'],
-                ':stock'       => $_POST['stock'],
-                ':categoria'   => $_POST['categoria'], // Este guardará el ID de la categoría
-                ':imagen'      => $_POST['imagen'] ?? '',
-            ]);
-            
-            if ($ok) {
-                header('Location: ' . BASE_URL . 'admin/listar');
-                exit;
-            }
-            $error = 'Error al crear el producto en la base de datos.';
-        }
-        
-        // --- NUEVO: OBTENER CATEGORÍAS PARA EL SELECT ---
+        $categorias = [];
+
+        // 1. OBTENER CATEGORÍAS PARA EL SELECT (Siempre necesario para la vista)
         try {
             $db = Database::getInstance()->getConnection();
             $stmt = $db->query("SELECT id, nombre FROM categorias ORDER BY nombre ASC");
             $categorias = $stmt->fetchAll();
         } catch (PDOException $e) {
             $error = "Error al cargar categorías: " . $e->getMessage();
-            $categorias = [];
         }
-        // ------------------------------------------------
+
+        // 2. PROCESAR EL FORMULARIO SI ES POST
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $modelo = new Producto();
+            
+            // Validamos que los campos obligatorios existan
+            $datos = [
+                ':nombre'      => $_POST['nombre'] ?? '',
+                ':descripcion' => $_POST['descripcion'] ?? '',
+                ':precio'      => $_POST['precio'] ?? 0,
+                ':stock'       => $_POST['stock'] ?? 0,
+                ':categoria'   => (int)($_POST['categoria'] ?? 0),
+                ':imagen'      => $_POST['imagen'] ?? ''
+            ];
+
+            if ($modelo->crear($datos)) {
+                header('Location: ' . BASE_URL . 'admin/listar');
+                exit;
+            } else {
+                $error = 'Error al crear el producto en la base de datos.';
+            }
+        }
         
         require_once __DIR__ . '/../views/layout/header.php';
         require_once __DIR__ . '/../views/admin/crear.php';
