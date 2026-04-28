@@ -3,45 +3,51 @@
 
 require_once __DIR__ . '/Database.php';
 
-class Orden {
+class Orden
+{
     private PDO $db;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = Database::getInstance()->getConnection();
     }
 
-    public function crear(int $usuario_id, array $items): bool {
-        $total = array_sum(array_map(fn($i) => $i['precio'] * $i['cantidad'], $items));
+    public function crear(int $usuario_id, array $items): int|bool
+    {
+        try {
+            $total = array_sum(array_map(fn($i) => $i['precio'] * $i['cantidad'], $items));
 
-        // Ajuste CRÍTICO para PostgreSQL: Usamos RETURNING id
-        $stmt = $this->db->prepare(
-            "INSERT INTO ordenes (usuario_id, total) VALUES (:uid, :total) RETURNING id"
-        );
-        $stmt->execute([':uid' => $usuario_id, ':total' => $total]);
-        
-        // Atrapamos el ID retornado por PostgreSQL
-        $orden_id = $stmt->fetchColumn();
-
-        foreach ($items as $item) {
+            // 1. IMPORTANTE: Usamos "RETURNING id" al final del INSERT
             $stmt = $this->db->prepare(
-                "INSERT INTO detalles_orden (orden_id, producto_id, cantidad, precio_unitario)
-                 VALUES (:oid, :pid, :cantidad, :precio)"
+                "INSERT INTO ordenes (usuario_id, total) VALUES (:uid, :total) RETURNING id"
             );
-            $stmt->execute([
-                ':oid'      => $orden_id,
-                ':pid'      => $item['producto_id'],
-                ':cantidad' => $item['cantidad'],
-                ':precio'   => $item['precio']
-            ]);
-        }
-        return true;
-    }
+            $stmt->execute([':uid' => $usuario_id, ':total' => $total]);
 
-    public function getByUsuario(int $usuario_id): array {
-        $stmt = $this->db->prepare(
-            "SELECT * FROM ordenes WHERE usuario_id = :uid ORDER BY created_at DESC"
-        );
-        $stmt->execute([':uid' => $usuario_id]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            // 2. IMPORTANTE: Usamos fetchColumn() para atrapar el ID que retorna Postgres
+            $orden_id = $stmt->fetchColumn();
+
+            if (!$orden_id) return false;
+
+            // 3. Insertar los detalles
+            foreach ($items as $item) {
+                $stmt = $this->db->prepare(
+                    "INSERT INTO detalles_orden (orden_id, producto_id, cantidad, precio_unitario)
+                     VALUES (:oid, :pid, :cantidad, :precio)"
+                );
+                $stmt->execute([
+                    ':oid'      => $orden_id,
+                    ':pid'      => $item['producto_id'],
+                    ':cantidad' => $item['cantidad'],
+                    ':precio'   => $item['precio']
+                ]);
+            }
+
+            return (int)$orden_id; // Devolvemos el ID real (1, 2, 3...)
+
+        } catch (PDOException $e) {
+            // Si hay error, puedes verlo aquí
+            // die("Error en Orden: " . $e->getMessage()); 
+            return false;
+        }
     }
 }
