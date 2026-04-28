@@ -7,7 +7,6 @@ require_once __DIR__ . '/../models/Database.php';
 class AdminController {
     
     public function __construct() {
-        // Protección de rutas: Si no hay sesión o no es admin, fuera.
         if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'admin') {
             header('Location: ' . BASE_URL . 'usuario/login');
             exit;
@@ -32,7 +31,6 @@ class AdminController {
         $error = '';
         $categorias = [];
 
-        // 1. OBTENER CATEGORÍAS PARA EL SELECT (Siempre necesario para la vista)
         try {
             $db = Database::getInstance()->getConnection();
             $stmt = $db->query("SELECT id, nombre FROM categorias ORDER BY nombre ASC");
@@ -41,11 +39,9 @@ class AdminController {
             $error = "Error al cargar categorías: " . $e->getMessage();
         }
 
-        // 2. PROCESAR EL FORMULARIO SI ES POST
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $modelo = new Producto();
             
-            // Validamos que los campos obligatorios existan
             $datos = [
                 ':nombre'      => $_POST['nombre'] ?? '',
                 ':descripcion' => $_POST['descripcion'] ?? '',
@@ -67,7 +63,47 @@ class AdminController {
         require_once __DIR__ . '/../views/admin/crear.php';
         require_once __DIR__ . '/../views/layout/footer.php';
     }
+    // INICIO DEL MÉTODO EDITAR 
+    public function editar($id = null) {
+        if (!$id) {
+            header('Location: ' . BASE_URL . 'admin/listar');
+            exit;
+        }
 
+        $modelo   = new Producto();
+        $producto = $modelo->getById((int)$id);
+        $error    = '';
+
+        try {
+            $db = Database::getInstance()->getConnection();
+            $stmt = $db->query("SELECT id, nombre FROM categorias ORDER BY nombre ASC");
+            $categorias = $stmt->fetchAll();
+        } catch (PDOException $e) {
+            $categorias = [];
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $ok = $modelo->editar((int)$id, [
+                ':nombre'      => $_POST['nombre'] ?? '',
+                ':descripcion' => $_POST['descripcion'] ?? '',
+                ':precio'      => $_POST['precio'] ?? 0,
+                ':stock'       => $_POST['stock'] ?? 0,
+                ':categoria'   => (int)($_POST['categoria'] ?? 0),
+                ':imagen'      => $_POST['imagen'] ?? '',
+            ]);
+            if ($ok) {
+                header('Location: ' . BASE_URL . 'admin/listar');
+                exit;
+            }
+            $error = 'Error al actualizar el producto.';
+        }
+
+        require_once __DIR__ . '/../views/layout/header.php';
+        require_once __DIR__ . '/../views/admin/editar.php';
+        require_once __DIR__ . '/../views/layout/footer.php';
+    }
+    // FIN DEL MÉTODO EDITAR
+    
     public function eliminar($id = null) {
         if ($id) {
             $modelo = new Producto();
