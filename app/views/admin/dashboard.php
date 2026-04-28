@@ -1,8 +1,14 @@
 <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
     <h4 class="text-navy fw-bold m-0"><i class="bi bi-gear-fill me-2 text-secondary"></i> Panel de Administración</h4>
-    <a href="<?= BASE_URL ?>admin/crear" class="btn btn-success rounded-pill px-4 shadow-sm">
-        <i class="bi bi-plus-lg"></i> Nuevo Producto
-    </a>
+    
+    <div class="d-flex gap-2">
+        <a href="<?= BASE_URL ?>admin/ordenes" class="btn btn-primary rounded-pill px-4 shadow-sm">
+            <i class="bi bi-receipt"></i> Ver Ventas
+        </a>
+        <a href="<?= BASE_URL ?>admin/crear" class="btn btn-success rounded-pill px-4 shadow-sm">
+            <i class="bi bi-plus-lg"></i> Nuevo Producto
+        </a>
+    </div>
 </div>
 
 <?php if (empty($productos)): ?>

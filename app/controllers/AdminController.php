@@ -4,30 +4,35 @@
 require_once __DIR__ . '/../models/Producto.php';
 require_once __DIR__ . '/../models/Database.php';
 
-class AdminController {
-    
-    public function __construct() {
+class AdminController
+{
+
+    public function __construct()
+    {
         if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'admin') {
             header('Location: ' . BASE_URL . 'usuario/login');
             exit;
         }
     }
 
-    public function index($id = null) {
+    public function index($id = null)
+    {
         header('Location: ' . BASE_URL . 'admin/listar');
         exit;
     }
 
-    public function listar($id = null) {
+    public function listar($id = null)
+    {
         $modelo = new Producto();
         $productos = $modelo->getAll();
-        
+
         require_once __DIR__ . '/../views/layout/header.php';
         require_once __DIR__ . '/../views/admin/dashboard.php';
         require_once __DIR__ . '/../views/layout/footer.php';
     }
 
-    public function crear($id = null) {
+    public function crear($id = null)
+    {
         $error = '';
         $categorias = [];
 
@@ -41,7 +46,7 @@ class AdminController {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $modelo = new Producto();
-            
+
             $datos = [
                 ':nombre'      => $_POST['nombre'] ?? '',
                 ':descripcion' => $_POST['descripcion'] ?? '',
@@ -58,13 +63,15 @@ class AdminController {
                 $error = 'Error al crear el producto en la base de datos.';
             }
         }
-        
+
         require_once __DIR__ . '/../views/layout/header.php';
         require_once __DIR__ . '/../views/admin/crear.php';
         require_once __DIR__ . '/../views/layout/footer.php';
     }
+
     // INICIO DEL MÉTODO EDITAR 
-    public function editar($id = null) {
+    public function editar($id = null)
+    {
         if (!$id) {
             header('Location: ' . BASE_URL . 'admin/listar');
             exit;
@@ -103,13 +110,35 @@ class AdminController {
         require_once __DIR__ . '/../views/layout/footer.php';
     }
     // FIN DEL MÉTODO EDITAR
-    
-    public function eliminar($id = null) {
+
+    public function eliminar($id = null)
+    {
         if ($id) {
             $modelo = new Producto();
             $modelo->eliminar((int)$id);
         }
         header('Location: ' . BASE_URL . 'admin/listar');
         exit;
+    }
+
+    // NUEVO MÉTODO PARA VER TODAS LAS COMPRAS (PANEL ADMIN)
+    public function ordenes($id = null)
+    {
+        require_once __DIR__ . '/../models/Orden.php';
+        $ordenModel = new Orden();
+
+        // Traer TODAS las compras con los datos del usuario
+        $compras = $ordenModel->getAllAdmin();
+
+        // Agregar los productos a cada compra
+        foreach ($compras as &$compra) {
+            $compra['detalles'] = $ordenModel->getDetalles($compra['id']);
+        }
+        unset($compra);
+
+        // Cargar la vista de órdenes del admin
+        require_once __DIR__ . '/../views/layout/header.php';
+        require_once __DIR__ . '/../views/admin/ordenes.php';
+        require_once __DIR__ . '/../views/layout/footer.php';
     }
 }

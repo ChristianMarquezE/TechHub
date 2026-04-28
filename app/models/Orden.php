@@ -65,4 +65,19 @@ class Orden
         $stmt->execute([':oid' => $orden_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Obtener TODAS las órdenes (Para el panel de Administrador)
+     */
+    public function getAllAdmin(): array
+    {
+        $stmt = $this->db->prepare(
+            "SELECT o.*, u.nombre as usuario_nombre, u.email as usuario_email 
+             FROM ordenes o
+             INNER JOIN usuarios u ON o.usuario_id = u.id
+             ORDER BY o.created_at DESC"
+        );
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
