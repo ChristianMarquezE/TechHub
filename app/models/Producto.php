@@ -17,23 +17,22 @@ class Producto
      */
     public function getAll(string $categoriaNombre = '', string $busqueda = ''): array
     {
-        // Usamos LEFT JOIN para obtener el nombre de la categoría desde la tabla vinculada
         $sql = "SELECT p.*, c.nombre as categoria_nombre 
-                FROM productos p
-                LEFT JOIN categorias c ON p.categoria = c.id 
-                WHERE 1=1";
+            FROM productos p
+            LEFT JOIN categorias c ON p.categoria = c.id 
+            WHERE 1=1";
 
         $params = [];
 
-        // Filtrar por nombre de categoría si se proporciona
-        if ($categoriaNombre !== '') {
+        // Filtro por Categoría
+        if (!empty($categoriaNombre)) {
             $sql .= " AND c.nombre = :categoria";
             $params[':categoria'] = $categoriaNombre;
         }
 
-        // Búsqueda por nombre de producto
-        if ($busqueda !== '') {
-            $sql .= " AND p.nombre ILIKE :busqueda"; // ILIKE en Postgres es case-insensitive
+        // Filtro por Búsqueda (Texto)
+        if (!empty($busqueda)) {
+            $sql .= " AND p.nombre ILIKE :busqueda";
             $params[':busqueda'] = "%$busqueda%";
         }
 

@@ -2,33 +2,36 @@
 // app/controllers/ProductController.php
 
 require_once __DIR__ . '/../models/Producto.php';
+require_once __DIR__ . '/../models/Database.php';
 
 class ProductController
 {
     public function index()
     {
-        // 1. Usamos el modelo real en lugar de la variable global $pdo
         $modeloProducto = new Producto();
 
-        // Asumiendo que tu modelo Producto tiene un método getAll()
-        // Si se llama diferente, ajusta esta línea
-        $productos = $modeloProducto->getAll();
+        // 1. CAPTURAR FILTROS DE LA URL
+        $filtroCategoria = $_GET['categoria'] ?? '';
+        $filtroBusqueda  = $_GET['q'] ?? '';
 
-        // 2. Cargamos las vistas en orden
-        if (file_exists(__DIR__ . '/../views/layout/header.php')) {
-            require_once __DIR__ . '/../views/layout/header.php';
+        // 2. OBTENER PRODUCTOS FILTRADOS
+        $productos = $modeloProducto->getAll($filtroCategoria, $filtroBusqueda);
+
+        // 3. OBTENER LISTA DE CATEGORÍAS (Para el Sidebar)
+        try {
+            $db = Database::getInstance()->getConnection();
+            $stmt = $db->query("SELECT nombre FROM categorias ORDER BY nombre ASC");
+            $listaCategorias = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        } catch (Exception $e) {
+            $listaCategorias = [];
         }
 
-        if (file_exists(__DIR__ . '/../views/productos/catalogo.php')) {
-            require_once __DIR__ . '/../views/productos/catalogo.php';
-        } else {
-            echo "<div class='container mt-5'><div class='alert alert-danger'>Error: No se encuentra el archivo del catálogo.</div></div>";
-        }
-
-        if (file_exists(__DIR__ . '/../views/layout/footer.php')) {
-            require_once __DIR__ . '/../views/layout/footer.php';
-        }
+        // 4. CARGAR VISTAS
+        require_once __DIR__ . '/../views/layout/header.php';
+        require_once __DIR__ . '/../views/productos/catalogo.php';
+        require_once __DIR__ . '/../views/layout/footer.php';
     }
+
     public function detalle($id = null)
     {
         if (!$id) {
@@ -40,15 +43,12 @@ class ProductController
         $producto = $modelo->getById((int)$id);
 
         if (!$producto) {
-            // Si el producto no existe, mandamos al catálogo
             header('Location: ' . BASE_URL . 'productos');
             exit;
         }
 
-        // Cargamos la vista de detalle con el layout
         require_once __DIR__ . '/../views/layout/header.php';
         require_once __DIR__ . '/../views/productos/detalle.php';
         require_once __DIR__ . '/../views/layout/footer.php';
     }
-    
 }
