@@ -17,18 +17,15 @@ class Orden
         try {
             $total = array_sum(array_map(fn($i) => $i['precio'] * $i['cantidad'], $items));
 
-            // 1. IMPORTANTE: Usamos "RETURNING id" al final del INSERT
             $stmt = $this->db->prepare(
-                "INSERT INTO ordenes (usuario_id, total) VALUES (:uid, :total) RETURNING id"
+                "INSERT INTO ordenes (usuario_id, total, estado) VALUES (:uid, :total, 'pendiente') RETURNING id"
             );
             $stmt->execute([':uid' => $usuario_id, ':total' => $total]);
 
-            // 2. IMPORTANTE: Usamos fetchColumn() para atrapar el ID que retorna Postgres
             $orden_id = $stmt->fetchColumn();
 
             if (!$orden_id) return false;
 
-            // 3. Insertar los detalles
             foreach ($items as $item) {
                 $stmt = $this->db->prepare(
                     "INSERT INTO detalles_orden (orden_id, producto_id, cantidad, precio_unitario)
@@ -42,12 +39,30 @@ class Orden
                 ]);
             }
 
-            return (int)$orden_id; // Devolvemos el ID real (1, 2, 3...)
-
+            return (int)$orden_id;
         } catch (PDOException $e) {
-            // Si hay error, puedes verlo aquí
-            // die("Error en Orden: " . $e->getMessage()); 
             return false;
         }
+    }
+
+    public function getByUsuario(int $usuario_id): array
+    {
+        $stmt = $this->db->prepare(
+            "SELECT * FROM ordenes WHERE usuario_id = :uid ORDER BY created_at DESC"
+        );
+        $stmt->execute([':uid' => $usuario_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getDetalles(int $orden_id): array
+    {
+        $stmt = $this->db->prepare(
+            "SELECT d.*, p.nombre, p.imagen 
+             FROM detalles_orden d
+             INNER JOIN productos p ON d.producto_id = p.id
+             WHERE d.orden_id = :oid"
+        );
+        $stmt->execute([':oid' => $orden_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

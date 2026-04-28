@@ -33,9 +33,14 @@
             </ul>
             <div class="d-flex align-items-center gap-2">
                 <?php if (isset($_SESSION['usuario'])): ?>
-                    <span class="text-white-50 small">
+                    <span class="text-white-50 small me-2">
                         Hola, <?= htmlspecialchars($_SESSION['usuario']['nombre']) ?>
                     </span>
+                    
+                    <a href="<?= BASE_URL ?>usuario/historial" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-clock-history"></i> Mis Compras
+                    </a>
+
                     <a href="<?= BASE_URL ?>carrito" class="btn btn-outline-light btn-sm position-relative">
                         <i class="bi bi-cart3"></i> Carrito
                         <?php if (($_SESSION['carrito_count'] ?? 0) > 0): ?>

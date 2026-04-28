@@ -20,7 +20,6 @@ class UserController
             if ($usuario && $modelo->verificarPassword($_POST['password'], $usuario['password'])) {
                 $_SESSION['usuario'] = $usuario;
 
-                // Asumiendo que tienes un modelo Carrito para contar, si no, déjalo en 0
                 require_once __DIR__ . '/../models/Carrito.php';
                 $carritoModelo = new Carrito();
                 $_SESSION['carrito_count'] = $carritoModelo->contarItems($usuario['id']);
@@ -31,7 +30,6 @@ class UserController
             $error = 'Email o contraseña incorrectos';
         }
 
-        // Cargar vista con layout
         require_once __DIR__ . '/../views/layout/header.php';
         require_once __DIR__ . '/../views/auth/login.php';
         require_once __DIR__ . '/../views/layout/footer.php';
@@ -43,7 +41,6 @@ class UserController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $modelo = new Usuario();
 
-            // Primero verificamos si el correo ya existe (Opcional, pero más limpio)
             $existe = $modelo->getByEmail($_POST['email']);
 
             if ($existe) {
@@ -64,7 +61,6 @@ class UserController
             }
         }
 
-        // Cargamos la vista
         require_once __DIR__ . '/../views/layout/header.php';
         require_once __DIR__ . '/../views/auth/registro.php';
         require_once __DIR__ . '/../views/layout/footer.php';
@@ -76,5 +72,29 @@ class UserController
         session_destroy();
         header('Location: ' . BASE_URL . 'productos');
         exit;
+    }
+
+    public function historial($id = null)
+    {
+        if (!isset($_SESSION['usuario'])) {
+            header('Location: ' . BASE_URL . 'usuario/login');
+            exit;
+        }
+
+        require_once __DIR__ . '/../models/Orden.php';
+        $ordenModel = new Orden();
+
+        $usuario_id = $_SESSION['usuario']['id'];
+
+        $compras = $ordenModel->getByUsuario($usuario_id);
+
+        foreach ($compras as &$compra) {
+            $compra['detalles'] = $ordenModel->getDetalles($compra['id']);
+        }
+        unset($compra);
+
+        require_once __DIR__ . '/../views/layout/header.php';
+        require_once __DIR__ . '/../views/auth/historial.php';
+        require_once __DIR__ . '/../views/layout/footer.php';
     }
 }
