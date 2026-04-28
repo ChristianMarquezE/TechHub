@@ -26,7 +26,7 @@
                 <tr>
                     <td class="px-4 text-muted fw-bold">#<?= $p['id'] ?></td>
                     <td class="fw-medium text-navy"><?= htmlspecialchars($p['nombre']) ?></td>
-                    <td><span class="badge bg-light text-dark border"><?= htmlspecialchars($p['categoria']) ?></span></td>
+                    <td><span class="badge bg-light text-dark border"><?= htmlspecialchars($p['categoria_nombre'] ?? 'Sin categoría') ?></span></td>
                     <td class="text-end fw-bold">$<?= number_format($p['precio'], 0, ',', '.') ?></td>
                     <td class="text-center">
                         <span class="badge <?= $p['stock'] > 5 ? 'bg-success' : ($p['stock'] > 0 ? 'bg-warning text-dark' : 'bg-danger') ?> rounded-pill px-3">
