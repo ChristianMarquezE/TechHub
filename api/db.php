@@ -1,13 +1,14 @@
 <?php
-// Vercel inyecta automáticamente la variable si usas la integración
 $dsn = getenv('DATABASE_URL');
 
 try {
-    // PDO se encarga de interpretar la cadena de conexión de Postgres
+    // Si la variable empieza con postgres://, PDO a veces necesita que se especifique pgsql:
+    $dsn_pgsql = str_replace('postgres://', 'pgsql:host=', $dsn);
+    // Esto convierte la URL en un formato que PDO entiende mejor si getenv falla
+
     $pdo = new PDO($dsn);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    // Ya puedes hacer consultas: $pdo->query("SELECT * FROM tabla");
 } catch (PDOException $e) {
-    die("Error conectando a la base de datos: " . $e->getMessage());
+    // Si falla, imprime qué está recibiendo la variable (CUIDADO: solo para pruebas)
+    die("Error: " . $e->getMessage() . " | Valor de DSN: " . ($dsn ?: 'VACÍO'));
 }
-?>
