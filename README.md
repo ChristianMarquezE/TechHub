@@ -13,6 +13,9 @@ CHRISTIAN ESCOBAR MÁRQUEZ
 
 ***TechHub***
 
+DOCUMENTACIÓN:
+[https://drive.google.com/file/d/1Jwkp92v2I_MD_DUSfXgVc6shcGJz140q/view?usp=sharing](https://drive.google.com/file/d/1Jwkp92v2I_MD_DUSfXgVc6shcGJz140q/view?usp=sharing)
+
 NOTA IMPORTANTE: Algunas funcionalidades podrían no funcionar en local...
 ¡¡Segun lo conversado el 28 de Abril: Quedamos de acuerdo con el profesor entregar el trabajo con Neon tech, postgreSQL en vez de XAMP!!
 
@@ -86,9 +89,9 @@ Revisar de manera Local:
 
 1. Clona el repositorio: https://github.com/ChristianMarquezE/TechHub
 git clone https://github.com/ChristianMarquezE/TechHub
-2. Accede al proyecto:
+1. Accede al proyecto:
 cd TechHub
-3. Asegúrece de tener:
+1. Asegúrece de tener:
 
 \-PHP - 7.4
 
