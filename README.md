@@ -1,13 +1,13 @@
 # TechHub
 
-Profesor         : ROBERTO CARMONA CLARO
-Institución      : AIEP ONLINE
-NRC              : 4051
-Nombre del Módulo: TALLER DE APLICACIONES PARA INTERNET
-Integrantes      : RENÉ MUÑOZ PEROT 
-                   ALINE MEDINA STUARDO 
-                   FELIPE AVIÑO MANSILLA
-                   CHRISTIAN ESCOBAR MÁRQUEZ
+Profesor         : ROBERTO CARMONA CLARO  
+Institución      : AIEP ONLINE  
+NRC              : 4051  
+Nombre del Módulo: TALLER DE APLICACIONES PARA INTERNET  
+Integrantes      : RENÉ MUÑOZ PEROT  
+                   ALINE MEDINA STUARDO  
+                   FELIPE AVIÑO MANSILLA  
+                   CHRISTIAN ESCOBAR MÁRQUEZ  
 
 
 ***Techub***
