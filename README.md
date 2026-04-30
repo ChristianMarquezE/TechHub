@@ -13,11 +13,13 @@ CHRISTIAN ESCOBAR MÁRQUEZ
 
 ***TechHub***
 
-DOCUMENTACIÓN:
-[https://drive.google.com/file/d/1Jwkp92v2I_MD_DUSfXgVc6shcGJz140q/view?usp=sharing](https://drive.google.com/file/d/1Jwkp92v2I_MD_DUSfXgVc6shcGJz140q/view?usp=sharing)
 
 NOTA IMPORTANTE: Algunas funcionalidades podrían no funcionar en local...
 ¡¡Segun lo conversado el 28 de Abril: Quedamos de acuerdo con el profesor entregar el trabajo con Neon tech, postgreSQL en vez de XAMP!!
+
+DOCUMENTACIÓN:
+[https://drive.google.com/file/d/1Jwkp92v2I_MD_DUSfXgVc6shcGJz140q/view?usp=sharing](https://drive.google.com/file/d/1Jwkp92v2I_MD_DUSfXgVc6shcGJz140q/view?usp=sharing)
+
 
 Plataforma web desarrollada con PHP (arquitectura MVC) y PostgreSQL (Neon Tech) para la gestión de productos, usuarios, carrito de compras y administración.
 
