@@ -11,7 +11,7 @@ FELIPE AVIÑO MANSILLA
 CHRISTIAN ESCOBAR MÁRQUEZ  
 
 
-***Techub***
+***TechHub***
 
 NOTA IMPORTANTE: Algunas funcionalidades podrían no funcionar en local...
 ¡¡Segun lo conversado el 28 de Abril: Quedamos de acuerdo con el profesor entregar el trabajo con Neon tech, postgreSQL en vez de XAMP!!
@@ -40,7 +40,7 @@ Deploy: Vercel
 
 
 ```
-techub/
+techhub/
 ├── api/
 │   ├── db.php
 │   └── index.php
@@ -85,9 +85,9 @@ o si se le es más cómodo,
 Revisar de manera Local:
 
 1. Clona el repositorio: https://github.com/ChristianMarquezE/TechHub
-git clone https://github.com/tu-usuario/techub.git
+git clone https://github.com/ChristianMarquezE/TechHub
 2. Accede al proyecto:
-cd techub
+cd TechHub
 3. Asegúrece de tener:
 
 \-PHP - 7.4
